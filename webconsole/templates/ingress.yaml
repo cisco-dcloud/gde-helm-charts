@@ -1,6 +1,3 @@
-################################################################################
-# WEB CONSOLE 
-################################################################################
 {{- if .Values.webConsole.ingress.enabled -}}
 {{- $fullName := include "wc.webConsole.fullname" . -}}
 {{- $svcName := .Values.webConsole.service.name -}}
