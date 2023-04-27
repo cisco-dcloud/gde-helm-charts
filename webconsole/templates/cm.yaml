@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: devices
 data:
-  devices.yaml:
+  devices.yaml: |
     devices:
       - hideAddress: true
         host: sshserver
