@@ -10,7 +10,7 @@ data:
         name: SSHServer
         user: "sshuser"
         password: "sshuser"
-        port: 22
+        port: 2222
         power:
           capabilities:
           - all
