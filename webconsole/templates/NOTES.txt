@@ -1,0 +1,8 @@
+1. iDAC API URL:
+{{- if .Values.webConsole.ingress.enabled }}
+{{- range $host := .Values.webConsole.ingress.hosts }}
+  {{- range .paths }}
+  https://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- end }}

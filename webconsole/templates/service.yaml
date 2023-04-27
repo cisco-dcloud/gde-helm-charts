@@ -1,0 +1,37 @@
+################################################################################
+#  WEB CONSOLE / SSH SERVER 
+################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.webConsole.service.name }}
+  labels:
+    {{- include "wc.webConsole.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.webConsole.service.type }}
+  ports:
+    - port: {{ .Values.webConsole.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "wc.webConsole.selectorLabels" . | nindent 4 }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.sshServer.service.name }}
+  labels:
+    {{- include "wc.sshServer.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.sshServer.service.type }}
+  ports:
+    - port: {{ .Values.sshServer.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "wc.sshServer.selectorLabels" . | nindent 4 }}
+

@@ -1,0 +1,204 @@
+################################################################################
+# WEB CONSOLE / SSH SERVER
+################################################################################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wc.webConsole.fullname" . }}
+  labels:
+    {{- include "wc.webConsole.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.webConsole.autoscaling.enabled }}
+  replicas: {{ .Values.webConsole.replicaCount }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 30%        # how many pods we can add at a time
+      maxUnavailable: 10%  # maxUnavailable define how many pods can be unavailable during the rolling update
+  selector:
+    matchLabels:
+      {{- include "wc.webConsole.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.webConsole.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "wc.webConsole.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.webConsole.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "wc.webConsole.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.webConsole.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.webConsole.securityContext | nindent 12 }}
+          image: "{{ .Values.webConsole.image.repository }}:{{ .Values.webConsole.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.webConsole.image.pullPolicy }}
+          ports:
+          {{- if .Values.webConsole.ports }}
+            {{- toYaml .Values.webConsole.ports | nindent 12 }}
+          {{- end }}
+
+          livenessProbe:
+          {{- with .Values.webConsole.livenessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          readinessProbe:
+          {{- with .Values.webConsole.readinessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          lifecycle:
+          {{- with .Values.webConsole.lifecycle }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          volumeMounts:
+          {{- with .Values.webConsole.podVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+
+          env:
+            - name: "WRITER_REPLICAS_COUNT"
+              value: "{{ .Values.webConsole.registerWriterReplicas }}"
+          {{- if .Values.webConsole.extraEnvs }}
+            {{- toYaml .Values.webConsole.extraEnvs | nindent 12 }}
+          {{- end }}
+
+          resources:
+            {{- toYaml .Values.webConsole.resources | nindent 12 }}
+      volumes:
+      {{- with .Values.webConsole.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }} 
+
+      {{- with .Values.webConsole.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.webConsole.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: api-{{ include "wc.name" . }}
+      {{- with .Values.webConsole.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wc.sshServer.fullname" . }}
+  labels:
+    {{- include "wc.sshServer.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.sshServer.autoscaling.enabled }}
+  replicas: {{ .Values.sshServer.replicaCount }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 30%        # how many pods we can add at a time
+      maxUnavailable: 10%  # maxUnavailable define how many pods can be unavailable during the rolling update
+  selector:
+    matchLabels:
+      {{- include "wc.sshServer.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.sshServer.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "wc.sshServer.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.sshServer.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "wc.sshServer.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.sshServer.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.sshServer.securityContext | nindent 12 }}
+          image: "{{ .Values.sshServer.image.repository }}:{{ .Values.sshServer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sshServer.image.pullPolicy }}
+          ports:
+          {{- if .Values.sshServer.ports }}
+            {{- toYaml .Values.sshServer.ports | nindent 12 }}
+          {{- end }}
+
+          livenessProbe:
+          {{- with .Values.sshServer.livenessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          readinessProbe:
+          {{- with .Values.sshServer.readinessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          lifecycle:
+          {{- with .Values.sshServer.lifecycle }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          volumeMounts:
+          {{- with .Values.sshServer.podVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+
+          env:
+            - name: "WRITER_REPLICAS_COUNT"
+              value: "{{ .Values.sshServer.registerWriterReplicas }}"
+          {{- if .Values.sshServer.extraEnvs }}
+            {{- toYaml .Values.sshServer.extraEnvs | nindent 12 }}
+          {{- end }}
+
+          resources:
+            {{- toYaml .Values.sshServer.resources | nindent 12 }}
+      volumes:
+      {{- with .Values.sshServer.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }} 
+
+      {{- with .Values.sshServer.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sshServer.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: api-{{ include "wc.name" . }}
+      {{- with .Values.sshServer.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
