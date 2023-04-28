@@ -103,7 +103,7 @@ auth:
       valueFrom:
         secretKeyRef:
           key: SESSION_SECRET
-          name: idac
+          name: auth
     - name: AUTH_PASSTHROUGH
       value: "false"
   podVolumeMounts:
