@@ -6,7 +6,7 @@
 # Chef
 ################################################################################
 auth:
-  deploymentType: Rollout
+  deploymentType: Deployment
   replicaCount: 1
   image:
     repository: ghcr.io/cisco-dcloud/idac-auth
@@ -112,7 +112,7 @@ auth:
   volumes:
   - name: sig-keys
     secret:
-      secretName: idac
+      secretName: auth
       items:
       - key: private.pem
         path: private.pem
