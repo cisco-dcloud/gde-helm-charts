@@ -1,0 +1,42 @@
+################################################################################
+# UI
+################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.auth.service.name }}-stable
+  labels: 
+    idac.prometheus.io/port: "8080"
+    idac.prometheus.io/scrape: "true"
+    idac.prometheus.io/scheme: "http"
+    {{- include "idac.auth.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.auth.service.type }}
+  ports:
+    - port: {{ .Values.auth.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector: 
+    {{- include "idac.auth.selectorLabels" . | nindent 4 }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.auth.service.name }}-canary
+  labels: 
+    idac.prometheus.io/port: "8080"
+    idac.prometheus.io/scrape: "true"
+    idac.prometheus.io/scheme: "http"
+    {{- include "idac.auth.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.auth.service.type }}
+  ports:
+    - port: {{ .Values.auth.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector: 
+    {{- include "idac.auth.selectorLabels" . | nindent 4 }}

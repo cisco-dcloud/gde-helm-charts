@@ -1,0 +1,46 @@
+################################################################################
+# UI
+################################################################################
+---
+{{- if .Values.auth.ingressoauth.enabled -}}
+{{- $fullName := include "idac.fullname" . -}}
+{{- $svcName := .Values.auth.service.name -}}
+{{- $svcPort := .Values.auth.service.port -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oauth-{{ $fullName }}
+  labels:
+    {{- include "idac.auth.labels" . | nindent 4 }}
+  {{- with .Values.auth.ingressoauth.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.auth.ingressoauth.tls }}
+  tls:
+    {{- range .Values.auth.ingressoauth.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.auth.ingressoauth.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $svcName }}-stable
+                port: 
+                  number: {{ $svcPort }}
+          {{- end }}
+    {{- end }}
+  {{- end }}
+

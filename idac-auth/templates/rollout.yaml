@@ -1,0 +1,110 @@
+{{- if eq .Values.auth.deploymentType "Rollout" -}}
+################################################################################
+# auth 
+################################################################################
+--- 
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: ui-{{ include "idac.fullname" . }}
+  labels:
+    {{- include "idac.auth.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.auth.autoscaling.enabled }}
+  replicas: {{ .Values.auth.replicaCount }}
+  {{- end }}
+  revisionHistoryLimit: 3
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      - pause: {duration: 10}
+      - setWeight: 40
+      - pause: {duration: 10}
+      - setWeight: 60
+      - pause: {duration: 10}
+      - setWeight: 80
+      - pause: {duration: 10}
+      canaryService: {{ .Values.auth.service.name }}-canary
+      stableService: {{ .Values.auth.service.name }}-stable
+      trafficRouting:
+        nginx:
+          stableIngress: {{ .Values.auth.service.name }}
+
+
+  selector:
+    matchLabels:
+      {{- include "idac.auth.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.auth.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "idac.auth.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.auth.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "idac.auth.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.auth.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ui-{{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.auth.securityContext | nindent 12 }}
+          image: "{{ .Values.auth.image.repository }}:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          ports:
+          {{- if .Values.auth.ports }}
+            {{- toYaml .Values.auth.ports | nindent 12 }}
+          {{- end }}
+
+          lifecycle:
+          {{- with .Values.auth.lifecycle }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          volumeMounts:
+          {{- with .Values.auth.podVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+
+          env:
+          {{- if .Values.auth.extraEnvs }}
+            {{- toYaml .Values.auth.extraEnvs | nindent 12 }}
+          {{- end }}
+
+          resources:
+            {{- toYaml .Values.auth.resources | nindent 12 }}
+
+      volumes:
+      {{- with .Values.auth.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }} 
+
+      {{- with .Values.auth.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.auth.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: {{ include "idac.name" . }}
+      {{- with .Values.auth.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+---
+
+
