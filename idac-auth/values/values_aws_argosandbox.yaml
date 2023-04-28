@@ -92,9 +92,9 @@ auth:
     - name: OAUTH_KEYS_PATH
       value: /var/sig-keys/private.pem
     - name: MONGODB_ENABLED
-      value: false
+      value: "false"
     - name: REDIS_ENABLED
-      value: false
+      value: "false"
     - name: ADMIN_ACCESS_GROUP
       value: CN=idac-landing-admins,OU=Cisco Groups,O=cco.cisco.com
     - name: SESSION_COOKIE_NAME
