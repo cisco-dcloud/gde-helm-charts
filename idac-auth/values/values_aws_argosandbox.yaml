@@ -105,16 +105,16 @@ auth:
         secretKeyRef:
           key: MONGODB_DBNAME
           name: auth
-    - name: REDIS_HOST
-      valueFrom:
-        configMapKeyRef:
-          name: auth
-          key: REDIS_HOST
-    - name: REDIS_PORT
-      valueFrom:
-        configMapKeyRef:
-          name: auth
-          key: REDIS_PORT
+    # - name: REDIS_HOST
+    #   valueFrom:
+    #     configMapKeyRef:
+    #       name: auth
+    #       key: REDIS_HOST
+    # - name: REDIS_PORT
+    #   valueFrom:
+    #     configMapKeyRef:
+    #       name: auth
+    #       key: REDIS_PORT
     - name: ADMIN_ACCESS_GROUP
       value: CN=idac-landing-admins,OU=Cisco Groups,O=cco.cisco.com
     - name: SESSION_COOKIE_NAME
