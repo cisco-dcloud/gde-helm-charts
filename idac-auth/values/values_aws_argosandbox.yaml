@@ -91,10 +91,10 @@ auth:
           name: auth
     - name: OAUTH_KEYS_PATH
       value: /var/sig-keys/private.pem
-    - name: MONGODB_ENABLED
-      value: "false"
-    - name: REDIS_ENABLED
-      value: "false"
+    # - name: MONGODB_ENABLED
+    #   value: "false"
+    # - name: REDIS_ENABLED
+    #   value: "false"
     - name: MONGODB_URI
       valueFrom:
         secretKeyRef:
