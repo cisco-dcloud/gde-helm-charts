@@ -77,78 +77,6 @@ spec:
           resources:
             {{- toYaml .Values.webConsole.resources | nindent 12 }}
 
-
-
-
-        {{- if .Values.sshServer.gcs.enabled }}
-        - name: {{ .Chart.Name }}-gcs
-          securityContext:
-            {{- toYaml .Values.sshServer.gcs.securityContext | nindent 12 }}
-          image: "{{ .Values.sshServer.gcs.image.repository }}:{{ .Values.sshServer.gcs.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.sshServer.gcs.image.pullPolicy }}
-
-          {{- if .Values.sshServer.gcs.command }}
-          command:
-          - {{ .Values.sshServer.gcs.command }}
-          {{- end }}
-          
-          {{- if .Values.sshServer.gcs.extraArgs }}
-          args:
-          {{- range $key, $value := .Values.sshServer.gcs.extraArgs }}
-              - {{ $value }}
-          {{- end }}
-          {{- end }}
-
-          ports:
-          {{- if .Values.sshServer.gcs.ports }}
-            {{- toYaml .Values.sshServer.gcs.ports | nindent 12 }}
-          {{- end }}
-
-          livenessProbe:
-          {{- with .Values.sshServer.gcs.livenessProbe }}
-          {{- toYaml . | nindent 12 }}
-          {{- end }}  
-
-          readinessProbe:
-          {{- with .Values.sshServer.gcs.readinessProbe }}
-          {{- toYaml . | nindent 12 }}
-          {{- end }}  
-
-          lifecycle:
-          {{- with .Values.sshServer.gcs.lifecycle }}
-          {{- toYaml . | nindent 12 }}
-          {{- end }}
-
-          volumeMounts:
-          {{- with .Values.sshServer.gcs.podVolumeMounts }}
-          {{- toYaml . | nindent 10 }}
-          {{- end }}
-
-          env:
-          {{- if .Values.sshServer.gcs.extraEnvs }}
-            {{- toYaml .Values.sshServer.gcs.extraEnvs | nindent 12 }}
-          {{- end }}
-
-          {{-  $list := "" -}}
-          {{- range .Values.sshServer.gcs.reposToPull }}
-            {{- $repo := printf "%s:%s:%s"  .github .branch .folderName -}}
-            {{- $list = printf "%s,%s" $list $repo -}}
-          {{- end }}
-            - name: REPOS_TO_PULL
-              value: {{ $list | trimPrefix "," }}
-
-
-          resources:
-            {{- toYaml .Values.sshServer.gcs.resources | nindent 12 }}
-
-        {{- end }}
-
-
-
-
-
-
-
       volumes:
       {{- with .Values.webConsole.volumes }}
         {{- toYaml . | nindent 6 }}
@@ -251,6 +179,82 @@ spec:
 
           resources:
             {{- toYaml .Values.sshServer.resources | nindent 12 }}
+
+
+
+
+
+
+
+        {{- if .Values.sshServer.gcs.enabled }}
+        - name: {{ .Chart.Name }}-gcs
+          securityContext:
+            {{- toYaml .Values.sshServer.gcs.securityContext | nindent 12 }}
+          image: "{{ .Values.sshServer.gcs.image.repository }}:{{ .Values.sshServer.gcs.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sshServer.gcs.image.pullPolicy }}
+
+          {{- if .Values.sshServer.gcs.command }}
+          command:
+          - {{ .Values.sshServer.gcs.command }}
+          {{- end }}
+          
+          {{- if .Values.sshServer.gcs.extraArgs }}
+          args:
+          {{- range $key, $value := .Values.sshServer.gcs.extraArgs }}
+              - {{ $value }}
+          {{- end }}
+          {{- end }}
+
+          ports:
+          {{- if .Values.sshServer.gcs.ports }}
+            {{- toYaml .Values.sshServer.gcs.ports | nindent 12 }}
+          {{- end }}
+
+          livenessProbe:
+          {{- with .Values.sshServer.gcs.livenessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          readinessProbe:
+          {{- with .Values.sshServer.gcs.readinessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          lifecycle:
+          {{- with .Values.sshServer.gcs.lifecycle }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          volumeMounts:
+          {{- with .Values.sshServer.gcs.podVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+
+          env:
+          {{- if .Values.sshServer.gcs.extraEnvs }}
+            {{- toYaml .Values.sshServer.gcs.extraEnvs | nindent 12 }}
+          {{- end }}
+
+          {{-  $list := "" -}}
+          {{- range .Values.sshServer.gcs.reposToPull }}
+            {{- $repo := printf "%s:%s:%s"  .github .branch .folderName -}}
+            {{- $list = printf "%s,%s" $list $repo -}}
+          {{- end }}
+            - name: REPOS_TO_PULL
+              value: {{ $list | trimPrefix "," }}
+
+
+          resources:
+            {{- toYaml .Values.sshServer.gcs.resources | nindent 12 }}
+
+        {{- end }}
+
+
+
+
+
+
+
       volumes:
       {{- with .Values.sshServer.volumes }}
         {{- toYaml . | nindent 6 }}
