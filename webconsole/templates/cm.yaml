@@ -7,7 +7,7 @@ data:
     devices:
       - hideAddress: true
         host: sshserver
-        name: Argo Sandbox
+        name: ArgoSandbox
         user: "sshuser"
         password: "sshuser"
         port: 2222
