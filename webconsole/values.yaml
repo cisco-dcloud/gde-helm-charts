@@ -187,7 +187,7 @@ sshServer:
         value : "20"
 
     reposToPull:
-    - github: github.com/cisco-dcloud/argo-workflows-templates.git/
+    - github: github.com/cisco-dcloud/argo-workflows-templates
       branch: main
       folderName: argo-workflows-templates
 
