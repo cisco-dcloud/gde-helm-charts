@@ -37,7 +37,7 @@ spec:
       securityContext:
         {{- toYaml .Values.webConsole.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-sshserver
           securityContext:
             {{- toYaml .Values.webConsole.securityContext | nindent 12 }}
           image: "{{ .Values.webConsole.image.repository }}:{{ .Values.webConsole.image.tag | default .Chart.AppVersion }}"
@@ -81,7 +81,7 @@ spec:
 
 
         {{- if .Values.sshServer.gcs.enabled }}
-        - name: gcs-{{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-gcs
           securityContext:
             {{- toYaml .Values.sshServer.gcs.securityContext | nindent 12 }}
           image: "{{ .Values.sshServer.gcs.image.repository }}:{{ .Values.sshServer.gcs.image.tag | default .Chart.AppVersion }}"
