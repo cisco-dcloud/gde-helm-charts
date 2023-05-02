@@ -7,12 +7,8 @@ data:
     devices:
       - hideAddress: true
         host: sshserver
-        name: SSHServer
+        name: Argo Sandbox
         user: "sshuser"
         password: "sshuser"
         port: 2222
-        power:
-          capabilities:
-          - all
-          id: '3368'
         type: switch
