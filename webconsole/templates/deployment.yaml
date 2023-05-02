@@ -76,6 +76,79 @@ spec:
 
           resources:
             {{- toYaml .Values.webConsole.resources | nindent 12 }}
+
+
+
+
+        {{- if .Values.webConsole.gcs.enabled }}
+        - name: gcs-{{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.webConsole.gcs.securityContext | nindent 12 }}
+          image: "{{ .Values.webConsole.gcs.image.repository }}:{{ .Values.webConsole.gcs.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.webConsole.gcs.image.pullPolicy }}
+
+          {{- if .Values.webConsole.gcs.command }}
+          command:
+          - {{ .Values.webConsole.gcs.command }}
+          {{- end }}
+          
+          {{- if .Values.webConsole.gcs.extraArgs }}
+          args:
+          {{- range $key, $value := .Values.webConsole.gcs.extraArgs }}
+              - {{ $value }}
+          {{- end }}
+          {{- end }}
+
+          ports:
+          {{- if .Values.webConsole.gcs.ports }}
+            {{- toYaml .Values.webConsole.gcs.ports | nindent 12 }}
+          {{- end }}
+
+          livenessProbe:
+          {{- with .Values.webConsole.gcs.livenessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          readinessProbe:
+          {{- with .Values.webConsole.gcs.readinessProbe }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}  
+
+          lifecycle:
+          {{- with .Values.webConsole.gcs.lifecycle }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          volumeMounts:
+          {{- with .Values.webConsole.gcs.podVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+
+          env:
+          {{- if .Values.webConsole.gcs.extraEnvs }}
+            {{- toYaml .Values.webConsole.gcs.extraEnvs | nindent 12 }}
+          {{- end }}
+
+          {{-  $list := "" -}}
+          {{- range .Values.webConsole.gcs.reposToPull }}
+            {{- $repo := printf "%s:%s:%s"  .github .branch .folderName -}}
+            {{- $list = printf "%s,%s" $list $repo -}}
+          {{- end }}
+            - name: REPOS_TO_PULL
+              value: {{ $list | trimPrefix "," }}
+
+
+          resources:
+            {{- toYaml .Values.webConsole.gcs.resources | nindent 12 }}
+
+        {{- end }}
+
+
+
+
+
+
+
       volumes:
       {{- with .Values.webConsole.volumes }}
         {{- toYaml . | nindent 6 }}

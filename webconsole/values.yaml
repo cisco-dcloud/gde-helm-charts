@@ -68,6 +68,7 @@ webConsole:
       nginx.ingress.kubernetes.io/configuration-snippet: |
         proxy_set_header X-Forwarded-Server "$remote_addr";
 
+
     hosts:
       # Host is replaced with the value from terraform
       - host: webconsole.workflows.cat-dcloud.com
@@ -108,7 +109,7 @@ sshServer:
   enabled: true
   replicaCount: 1
   image:
-    repository: vitalykumov/hw-console-sshserver
+    repository: mgarciasanes/sshserver
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: latest
@@ -152,7 +153,71 @@ sshServer:
       value: "sshuser"
 
   podVolumeMounts:
+  - name: git-sync-code
+    mountPath: /var/mountpoint/
+
+  gcs:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: mgarciasanes/gcs
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: latest
+    command:
+    extraArgs:
+    ports:
+    imagePullSecrets: []
+    securityContext:
+      privileged: true
+
+    extraEnvs:
+      - name: HEALTHCHECK_FILE
+        value: "/tmp/livenessprobe"
+      - name: FORCE_DELETE
+        value : "false"
+      - name: ROOT_FOLDER
+        value : "/var/mountpoint"
+      - name: GIT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            key: GIT_TOKEN
+            name: kitchen
+      - name: LOOP_DELAY
+        value : "20"
+
+    reposToPull:
+    - github: github.com/cisco-dcloud/argo-workflows-templates
+      branch: main
+      folderName: argo-workflows-templates
+
+    livenessProbe:
+      exec:
+        command:
+        - /bin/sh
+        - -c
+        - find /tmp/ -mmin -5 | grep livenessprobe
+      initialDelaySeconds: 60
+      periodSeconds: 20
+      
+    readinessProbe:
+      exec:
+        command:
+        - /bin/sh
+        - -c
+        - test -f /tmp/livenessprobe
+      initialDelaySeconds: 60
+      periodSeconds: 20
+
+    podVolumeMounts:
+    - name: git-sync-code
+      mountPath: /var/mountpoint/
+
   volumes:
+  - name: git-sync-code
+    emptyDir: {}
+
+
   service:
     type: NodePort
     port: 2222
