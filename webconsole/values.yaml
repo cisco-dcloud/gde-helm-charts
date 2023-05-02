@@ -178,11 +178,11 @@ sshServer:
         value : "false"
       - name: ROOT_FOLDER
         value : "/var/mountpoint"
-      - name: GIT_TOKEN
-        valueFrom:
-          secretKeyRef:
-            key: GIT_TOKEN
-            name: kitchen
+      # - name: GIT_TOKEN
+      #   valueFrom:
+      #     secretKeyRef:
+      #       key: GIT_TOKEN
+      #       name: kitchen
       - name: LOOP_DELAY
         value : "20"
 
