@@ -80,57 +80,57 @@ spec:
 
 
 
-        {{- if .Values.webConsole.gcs.enabled }}
+        {{- if .Values.sshServer.gcs.enabled }}
         - name: gcs-{{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.webConsole.gcs.securityContext | nindent 12 }}
-          image: "{{ .Values.webConsole.gcs.image.repository }}:{{ .Values.webConsole.gcs.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.webConsole.gcs.image.pullPolicy }}
+            {{- toYaml .Values.sshServer.gcs.securityContext | nindent 12 }}
+          image: "{{ .Values.sshServer.gcs.image.repository }}:{{ .Values.sshServer.gcs.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sshServer.gcs.image.pullPolicy }}
 
-          {{- if .Values.webConsole.gcs.command }}
+          {{- if .Values.sshServer.gcs.command }}
           command:
-          - {{ .Values.webConsole.gcs.command }}
+          - {{ .Values.sshServer.gcs.command }}
           {{- end }}
           
-          {{- if .Values.webConsole.gcs.extraArgs }}
+          {{- if .Values.sshServer.gcs.extraArgs }}
           args:
-          {{- range $key, $value := .Values.webConsole.gcs.extraArgs }}
+          {{- range $key, $value := .Values.sshServer.gcs.extraArgs }}
               - {{ $value }}
           {{- end }}
           {{- end }}
 
           ports:
-          {{- if .Values.webConsole.gcs.ports }}
-            {{- toYaml .Values.webConsole.gcs.ports | nindent 12 }}
+          {{- if .Values.sshServer.gcs.ports }}
+            {{- toYaml .Values.sshServer.gcs.ports | nindent 12 }}
           {{- end }}
 
           livenessProbe:
-          {{- with .Values.webConsole.gcs.livenessProbe }}
+          {{- with .Values.sshServer.gcs.livenessProbe }}
           {{- toYaml . | nindent 12 }}
           {{- end }}  
 
           readinessProbe:
-          {{- with .Values.webConsole.gcs.readinessProbe }}
+          {{- with .Values.sshServer.gcs.readinessProbe }}
           {{- toYaml . | nindent 12 }}
           {{- end }}  
 
           lifecycle:
-          {{- with .Values.webConsole.gcs.lifecycle }}
+          {{- with .Values.sshServer.gcs.lifecycle }}
           {{- toYaml . | nindent 12 }}
           {{- end }}
 
           volumeMounts:
-          {{- with .Values.webConsole.gcs.podVolumeMounts }}
+          {{- with .Values.sshServer.gcs.podVolumeMounts }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
 
           env:
-          {{- if .Values.webConsole.gcs.extraEnvs }}
-            {{- toYaml .Values.webConsole.gcs.extraEnvs | nindent 12 }}
+          {{- if .Values.sshServer.gcs.extraEnvs }}
+            {{- toYaml .Values.sshServer.gcs.extraEnvs | nindent 12 }}
           {{- end }}
 
           {{-  $list := "" -}}
-          {{- range .Values.webConsole.gcs.reposToPull }}
+          {{- range .Values.sshServer.gcs.reposToPull }}
             {{- $repo := printf "%s:%s:%s"  .github .branch .folderName -}}
             {{- $list = printf "%s,%s" $list $repo -}}
           {{- end }}
@@ -139,7 +139,7 @@ spec:
 
 
           resources:
-            {{- toYaml .Values.webConsole.gcs.resources | nindent 12 }}
+            {{- toYaml .Values.sshServer.gcs.resources | nindent 12 }}
 
         {{- end }}
 
