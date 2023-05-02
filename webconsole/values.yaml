@@ -8,7 +8,7 @@
 webConsole:
   replicaCount: 1
   image:
-    repository: vitalykumov/hw-console
+    repository: mgarciasanes/webconsole
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: latest
