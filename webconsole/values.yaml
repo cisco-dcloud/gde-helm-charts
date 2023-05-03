@@ -138,7 +138,7 @@ sshServer:
   securityContext: {}
   extraEnvs:
     - name: SUDO_ACCESS
-      value: "false"
+      value: "true"
     - name: PUID
       value: "1000"
     - name: PGID
