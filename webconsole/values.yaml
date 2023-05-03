@@ -137,14 +137,14 @@ sshServer:
   podSecurityContext: {}
   securityContext: {}
   extraEnvs:
+    - name: SUDO_ACCESS
+      value: "false"
     - name: PUID
       value: "1000"
     - name: PGID
       value: "1000"
     - name: TZ
       value: "Etc/UTC"
-    - name: SUDO_ACCESS
-      value: "false"
     - name: PASSWORD_ACCESS
       value: "true"
     - name: USER_PASSWORD
