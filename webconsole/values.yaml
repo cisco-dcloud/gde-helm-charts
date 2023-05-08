@@ -112,7 +112,7 @@ sshServer:
     repository: mgarciasanes/sshserver
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: amd64-version-9.1_p1-r2
+    tag: 2023_05_08_1
 
   ports:
   - name: http
