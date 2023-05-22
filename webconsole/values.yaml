@@ -65,7 +65,6 @@ webConsole:
       nginx.ingress.kubernetes.io/auth-keepalive: '10'
       nginx.ingress.kubernetes.io/auth-response-headers: authorization
       nginx.ingress.kubernetes.io/proxy-buffer-size: 8192k
-      nginx.ingress.kubernetes.io/auth-proxy-set-headers: auth-groups-webconsole
       nginx.ingress.kubernetes.io/configuration-snippet: |
         proxy_set_header X-Forwarded-Server "$remote_addr";
 
